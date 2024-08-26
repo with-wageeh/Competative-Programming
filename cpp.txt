@@ -488,23 +488,22 @@ void dfs(int i ,int par, vector<int>adj[], vector<int>&vis , vector<int>&low ,ve
     }
 }
 ************************************
-vector<int>dp(N + 5),dfsn(N + 5);
-int num = 1;
-vector<pi> bridges;
-void dfs(int node , int par , vector<int>adj[]){
+int c = 1 , root ;
+void dfs(int node , int par , vector<int>adj[] , vector<int>&dp , vector<int>&dfsn , vector<pi>&bridges){
     // dp [node] = number of backedges from the node (to up) + dp[allchildren] - number of backedges to the node (to down)
-    dfsn[node] = num++;
-    for(auto &ch : adj[node]){
+    dfsn[node] = c++;
+    for(auto ch : adj[node]){
+        if(ch == par)continue;
         if(dfsn[ch] == -1){
-           dfs(ch,node,adj);  // {max diameter with bridges , max hieght of branch eith bridges}
-            dp[node] += dp[ch];
+            dfs(ch,node , adj , dp , dfsn,bridges);
+            dp[node] += dp[ch]; // dp [node] +=  number of back edges from subtree of node and up to the node
         }
-        else if(dfsn[ch] < dfsn[node] && ch != par){
+        else if(dfsn[ch] < dfsn[node]){
             dp[ch]--;
-            dp[node] ++;
+            dp[node]++;
         }
     }
-   if(dp[node] == 0 && node != 1)bridges.push_back({node , par});
+    if(node != root && dp[node] == 0) bridges.push_back({node,par});
 }
 *********************************************************************************
 vector<int>dp(N + 5),dfsn(N + 5);
